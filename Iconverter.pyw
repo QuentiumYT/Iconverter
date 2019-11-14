@@ -2,7 +2,7 @@ import os, sys, urllib.request
 from tkinter import *
 from tkinter.messagebox import *
 
-__version__ = 2
+__version__ = 3
 __filename__ = "Iconverter"
 __basename__ = os.path.basename(sys.argv[0])
 __savepath__ = os.path.join(os.environ['APPDATA'], "QuentiumPrograms")
@@ -14,11 +14,11 @@ if not os.path.exists(__iconpath__):
     try:os.mkdir(__savepath__)
     except:pass
     if connection == True:
-        try:urllib.request.urlretrieve("http://quentium.fr/+++PythonDL/{}.ico".format(__filename__), __iconpath__)
+        try:urllib.request.urlretrieve("https://quentium.fr/+++PythonDL/{}.ico".format(__filename__), __iconpath__)
         except:pass
 
 if connection == True:
-    try:script_version = int(urllib.request.urlopen("http://quentium.fr/programs/index.php").read().decode().split(__filename__ + "<!-- Version: ")[1].split(" --></h2>")[0])
+    try:script_version = int(urllib.request.urlopen("https://quentium.fr/programs/index.php").read().decode().split(__filename__ + "<!-- Version: ")[1].split(" --></h2>")[0])
     except:script_version = __version__
     if script_version > __version__:
         if os.path.exists(__iconpath__):popup = Tk(); popup.attributes("-topmost", 1); popup.iconbitmap(__iconpath__); popup.withdraw()
@@ -26,18 +26,18 @@ if connection == True:
         if ask_update == "yes":
             try:os.rename(__basename__, __filename__ + "-old.exe")
             except:os.remove(__filename__ + "-old.exe"); os.rename(__basename__, __filename__ + "-old.exe")
-            if "-32" in str(__basename__):urllib.request.urlretrieve("http://quentium.fr/download.php?file={}-32.exe".format(__filename__), __filename__ + ".exe")
-            else:urllib.request.urlretrieve("http://quentium.fr/download.php?file={}.exe".format(__filename__), __filename__ + ".exe")
+            if "-32" in str(__basename__):urllib.request.urlretrieve("https://quentium.fr/download.php?file={}-32.exe".format(__filename__), __filename__ + ".exe")
+            else:urllib.request.urlretrieve("https://quentium.fr/download.php?file={}.exe".format(__filename__), __filename__ + ".exe")
             showwarning(__filename__, "Le programme va redémarrer pour fonctionner sous la nouvelle version.", icon="warning")
             os.system("start " + __filename__ + ".exe"); os._exit(1)
 
 __filename__ = __filename__ + " V" + str(__version__)
 
 import shutil
-from PIL import Image
 from tkinter.ttk import *
 from tkinter.filedialog import *
 from tkinter import *
+from PIL import Image
 
 constant_filename = ""
 path_tmp = (os.path.join(os.environ['APPDATA'], "Icontemp"))
