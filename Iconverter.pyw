@@ -42,15 +42,12 @@ from PIL import Image
 constant_filename = ""
 path_tmp = (os.path.join(os.environ['APPDATA'], "Icontemp"))
 combobox_list = ("<Taille>", "16x16", "32x32", "64x64", "128x128", "256x256")
-combobox_size = "nothing"
+combobox_size = None
 
 def selectsize(event):
     global combobox_size
-    combobox_var_size = combobox_var.get()
-    lenght_combobox_var = len(combobox_var.get())
-    lenght_combobox_var = int((lenght_combobox_var) / 2)
-    combobox_size = combobox_var_size[:lenght_combobox_var]
-    if combobox_size == "<Tai":
+    combobox_size = combobox_var.get().split("x")[0]
+    if combobox_size == "<Taille>":
         showinfo(__filename__, "La taille est incorrecte, la convertion sera effectuée en 256x256 par défaut.")
         combobox_size = 256
     combobox_size = int(combobox_size)
@@ -91,7 +88,7 @@ def convert_file():
 
         os.mkdir(path_tmp)
 
-        if combobox_size == "nothing":
+        if combobox_size is not None:
             showinfo(__filename__, "Aucune taille n'a été donnée, la convertion sera effectuée en 256x256")
             combobox_size = 256
 

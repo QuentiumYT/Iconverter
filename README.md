@@ -11,11 +11,11 @@
 
 >#### Allows to convert all possibles pictures you have in icons format (files .ico for Windows).
 <br>
-![](https://quentium.fr/programs/Github/Iconverter.gif)
+<p align="center"><img src="https://quentium.fr/programs/Github/Iconverter.gif"></p>
 
 ## 📥 Installation
 
-- Download the source code [here](https://github.com/QuentiumYT/Iconverter/archive/master.zip) and run `Iconverter.pyw` on your computer (you will need socket, platform, psutil, wmi and ctypes modules)
+- Download the source code [here](https://github.com/QuentiumYT/Iconverter/archive/master.zip) and run `Iconverter.pyw` on your computer (you will need PIL (Pillow) module)!
 - Download the 64bits compiled executable [here](https://quentium.fr/download.php?file=Iconverter.exe)!
 - Download the 32bits compiled executable [here](https://quentium.fr/download.php?file=Iconverter-32.exe)!
 
