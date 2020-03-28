@@ -2,7 +2,7 @@ import os, sys, urllib.request
 from tkinter import *
 from tkinter.messagebox import *
 
-__version__ = 3
+__version__ = 4
 __filename__ = "Iconverter"
 __basename__ = os.path.basename(sys.argv[0])
 __savepath__ = os.path.join(os.environ['APPDATA'], "QuentiumPrograms")
@@ -39,18 +39,8 @@ from tkinter.filedialog import *
 from tkinter import *
 from PIL import Image
 
-constant_filename = ""
-path_tmp = (os.path.join(os.environ['APPDATA'], "Icontemp"))
+path_tmp = os.path.join(os.environ['APPDATA'], "Icontemp")
 combobox_list = ("<Taille>", "16x16", "32x32", "64x64", "128x128", "256x256")
-combobox_size = None
-
-def selectsize(event):
-    global combobox_size
-    combobox_size = combobox_var.get().split("x")[0]
-    if combobox_size == "<Taille>":
-        showinfo(__filename__, "La taille est incorrecte, la convertion sera effectuée en 256x256 par défaut.")
-        combobox_size = 256
-    combobox_size = int(combobox_size)
 
 def load_file():
     global fname_open
@@ -62,61 +52,52 @@ def load_file():
                                         ("TGA", "*.tga"),
                                         ("All", "*.png .jpg *.jpeg *.jpe *.jfif *.gif *.bmp *.tif *.tiff *.tga")))
     if fname_open:
-        fbasename = os.path.basename(fname_open)
-        try:
-            constant_filename.set(str(fbasename))
-        except:
-            showerror(__filename__, "Le fichier " + fbasename + " n'a pas pu être lu !\n" + fname_open)
+        filename.set(os.path.basename(fname_open))
 
 def convert_file():
-    global fname_open
-    global combobox_size
-    try:
-        fname_open
-    except NameError:
-        showerror(__filename__, "Aucun fichier n'a été choisi !")
-    else:
-        fname_save = asksaveasfile(mode='w', defaultextension=".ico", filetypes=[("Fichiers icones","*.ico")])
+    if filename.get():
+        if combobox_val.get() == combobox_list[0]:
+            showwarning(__filename__, "Aucune taille n'a été donnée, la convertion sera effectuée en 256x256.")
+            combobox_size = 256
+        else:
+            combobox_size = int(combobox_val.get().split("x")[0])
+
+        fname_save = asksaveasfile(mode="w", defaultextension=".ico", filetypes=[("Fichiers icones", "*.ico")])
         if fname_save is None:
             return
-        f_name = fname_save.name
 
-        try:
-            shutil.rmtree(path_tmp)
-        except:
-            pass
-
+        try:shutil.rmtree(path_tmp)
+        except:pass
         os.mkdir(path_tmp)
-
-        if combobox_size is not None:
-            showinfo(__filename__, "Aucune taille n'a été donnée, la convertion sera effectuée en 256x256")
-            combobox_size = 256
 
         img = Image.open(fname_open)
         img = img.resize((combobox_size, combobox_size), Image.ANTIALIAS)
-        img.save(path_tmp + "\\resized.png", format="png", sizes=[(combobox_size, combobox_size)])
+        img.save(path_tmp + "\\resized.png", format="png", sizes=(combobox_size, combobox_size))
 
         img = Image.open(path_tmp + "\\resized.png")
         img = img.convert("RGBA")
-        datas = img.getdata()
+        img_data = img.getdata()
 
-        newData = []
-        for item in datas:
+        rgb_img_data = []
+        for item in img_data:
             if item[0] == 255 and item[1] == 255 and item[2] == 255:
-                newData.append((255, 255, 255, 0))
+                rgb_img_data.append((255, 255, 255, 0))
             else:
-                newData.append(item)
+                rgb_img_data.append(item)
 
-        img.putdata(newData)
+        img.putdata(rgb_img_data)
         img.save(path_tmp + "\\transparent.png", "PNG")
 
         img = Image.open(path_tmp + "\\transparent.png")
-        img.save(f_name, format="ico", sizes=[(combobox_size, combobox_size)])
+        img.save(fname_save.name, format="ico", sizes=[(combobox_size, combobox_size)])
 
         shutil.rmtree(path_tmp)
-        showinfo(__filename__, "Icone '" + os.path.basename(f_name) + "' à été crée avec succès !")
-        iconverter.destroy()
-        os._exit(0)
+        showinfo(__filename__, "Icone '" + os.path.basename(fname_save.name) + "' à été crée avec succès !")
+
+        filename.set("")
+        combobox_val.set(combobox_list[0])
+    else:
+        return showerror(__filename__, "Aucun fichier n'a été choisi !")
 
 iconverter = Tk()
 width = 600
@@ -159,8 +140,8 @@ Text1.configure(selectbackground="#c4c4c4")
 Text1.configure(selectforeground="black")
 Text1.configure(state="readonly")
 Text1.configure(width=300)
-constant_filename = StringVar()
-Text1.configure(textvariable=constant_filename)
+filename = StringVar()
+Text1.configure(textvariable=filename)
 
 Button1 = Button(iconverter)
 Button1.place(relx=0.39, rely=0.13, height=50, width=125)
@@ -178,7 +159,7 @@ Button1.configure(text="Ouvrir")
 Button1.configure(command=load_file)
 
 Button2 = Button(iconverter)
-Button2.place(relx=0.386, rely=0.75, height=50, width=135)
+Button2.place(relx=0.39, rely=0.75, height=50, width=135)
 Button2.configure(activebackground="#d9d9d9")
 Button2.configure(activeforeground="#000000")
 Button2.configure(background="#CCCCCC")
@@ -192,14 +173,13 @@ Button2.configure(pady="0")
 Button2.configure(text="Convertir")
 Button2.configure(command=convert_file)
 
-combobox_var = StringVar()
-combobox_var.set(combobox_list[0])
+combobox_val = StringVar()
+combobox_val.set(combobox_list[0])
 
-Combobox1 = Combobox(iconverter, textvariable=combobox_var, values=combobox_list, state="readonly", background="white")
+Combobox1 = Combobox(iconverter, textvariable=combobox_val, values=combobox_list, state="readonly", background="white")
 Combobox1.place(relx=0.405, rely=0.58, relheight=0.08, relwidth=0.19)
 Combobox1.configure(width=100)
 Combobox1.configure(takefocus="")
 Combobox1.configure(font=font1)
-Combobox1.bind("<<ComboboxSelected>>", selectsize)
 
 iconverter.mainloop()
